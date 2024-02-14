@@ -24,7 +24,7 @@ class CrimeDataRecord(BaseModel):
     longitude: Optional[float]
 
     def to_json(self) -> str:
-        return self.json()
+        return self.model_dump()
 
 
 class CrimeTypeMetrics(BaseModel):

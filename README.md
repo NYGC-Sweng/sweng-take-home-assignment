@@ -101,7 +101,7 @@ the review session.
 
 **First**, start the docker container with the provided Postgres database.
 ```sh
-$ docker-compose up db
+$ docker compose up db
 ```
 
 Upon container startup, this database will automatically be populated with a `interview_db.covid_state_stats` table.
@@ -120,8 +120,10 @@ $ curl http://localhost:5001/covid-stats/test-db-connection
 $ curl http://localhost:5001/covid-stats/test-db-connection?host=host.docker.internal
 ```
 
-**Finally**, create a new api endpoint to serve records from the `covid_state_stats` table.
-The database credentials can be found by looking up the environment variables that were injected into flask from `.env`.
+**Finally**, create two api endpoints: one to serve records from the `covid_state_stats` table, and one to persist
+changes to existing records from `covid_state_stats`. A single endpoint that accepts multiple request methods is
+acceptable. The database credentials can be found by looking up the environment variables that were injected into flask
+from `.env`.
 
 ```python
 # use host.docker.internal instead of localhost if debugging the api in docker
@@ -134,10 +136,14 @@ db = os.environ["POSTGRES_DB"]
 ```
 
 Success criteria:
-- Records from the `covid_state_stats` table are served via the new endpoint.
-- Records are served in json format.
-- Datetime fields are in the ISO 8601 format.
-- Results are paginated.
+- Serving records from the `covid_state_stats` table
+    - Records are served in json format.
+    - Datetime fields are in the ISO 8601 format.
+    - Results are paginated.
+- Persisting records to the `covid_state_stats` table
+    - Can persist changes to an existing record.
+    - All fields except for primary key should be settable to values allowable by their respective data type in the
+    `covid_state_stats` table.
 
 # Assignment 4 - Working with React
 
@@ -155,9 +161,14 @@ $ npm start
 ```
 
 **Next**, implement a page displaying information from the api endpoint in [Assignment 3](#assignment-3---working-with-apis).
-This page does not have to be aesthetically pleasing, but it should have good usability. Though not required, feel free
-to use any third party tools or libraries to help complete the assignment.
+This page does not have to be aesthetically pleasing, but it should have good usability. The data on this page should 
+be modifiable as well using the api endpoint from the previous assignment. Though not required, feel free to use any
+third party tools or libraries to help complete the assignment.
 
 Success criteria
-- The covid data table is paginated. Users may navigate to the `next` or `previous` pages.
-- The user can set "number of rows to display" to 25, 50, or 100
+- Viewing data
+    - The covid data table is paginated. Users may navigate to the `next` or `previous` pages.
+    - The user can set "number of rows to display" to 25, 50, or 100
+- Saving data
+    - Primary key values should not be settable.
+    - All other values settable to what api allows.
